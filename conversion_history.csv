@@ -14,3 +14,4 @@ Length,50.0,Kilometer,Meter,50000.0
 Length,100.0,Mile,Kilometer,160.934
 Weight,90.0,Kilogram,Gram,90000.0
 Length,0.0,Meter,Foot,0.0
+Speed,100.0,km/h,m/s,27.77777777777778

@@ -114,6 +114,20 @@ def main():
         st.markdown(""" 
          ### ℹ️ About This App
         This **Professional Unit Converter** app provides an easy and intuitive way to convert various units across multiple categories, helping you quickly get accurate results. Whether you're working with **Length**, **Weight**, **Temperature**, **Time**, **Data Storage**, or **Speed**, this app has you covered.
+
+        #### Features:
+        - **Multi-Category Conversion**: Convert between units in categories like Length (e.g., Meter to Kilometer), Weight (e.g., Kilogram to Pound), Temperature (e.g., Celsius to Fahrenheit), Time (e.g., Seconds to Hours), Data Storage (e.g., GB to MB), and Speed (e.g., m/s to km/h).
+        - **Conversion History**: Automatically stores your recent conversions so you can quickly access past results.
+        - **Accurate Results**: Calculations are based on reliable conversion factors and formulas.
+        - **User-Friendly Interface**: Simple design with interactive inputs that make conversions a breeze.
+        - **Instant Feedback**: Get your conversion results instantly with a single click.
+  
+        Whether you're a student, professional, or just someone who needs quick conversions, this app is your go-to tool!
+
+        - 💻 **Accessible & Responsive**: Works perfectly on both desktop and mobile devices.
+        - 🔄 **Efficient & Fast**: Get results instantly without any complicated steps.
+        - 📜 **Conversion History Tracking**: Track all your past conversions and retrieve them anytime.
+        - 🌐 **Perfect for Multiple Fields**: Whether you're working on a project, doing research, or simply converting for everyday use, this app is designed to make conversions simpler and faster.
         """)
 
     # User input
