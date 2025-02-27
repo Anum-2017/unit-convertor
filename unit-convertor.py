@@ -3,6 +3,31 @@ import pandas as pd
 from PIL import Image
 import os
 
+# Set Streamlit page configuration (Must be the first command)
+st.set_page_config(page_title="Professional Unit Converter", layout="wide")
+
+# Apply custom button styling
+st.markdown(
+    """
+    <style>
+    div.stButton > button:first-child {
+        background-color: #ff4b4b;
+        color: white;
+        font-size: 18px;
+        border-radius: 10px;
+        padding: 10px 24px;
+        border: none;
+        transition: 0.3s;
+    }
+    div.stButton > button:first-child:hover {
+        background-color: #ff1f1f;
+        transform: scale(1.05);
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
 # Conversion functions
 def convert_units(value, from_unit, to_unit, category):
     conversion_factors = {
@@ -43,42 +68,31 @@ def convert_units(value, from_unit, to_unit, category):
             ("mph", "m/s"): 0.44704, ("mph", "km/h"): 1.60934
         }
     }
-    
+
     try:
         factor = conversion_factors[category].get((from_unit, to_unit)) or conversion_factors[category].get((to_unit, from_unit))
         if factor:
-            if callable(factor):
-                return factor(value)
-            else:
-                return value * factor
-        else:
-            return None
+            return factor(value) if callable(factor) else value * factor
+        return None
     except KeyError:
         return None
 
-# Save conversion history to CSV
+# Save conversion history
 def save_conversion(category, value, from_unit, to_unit, result):
     history = read_conversion_history()
     new_entry = pd.DataFrame([[category, value, from_unit, to_unit, result]], columns=["Category", "Value", "From", "To", "Result"])
     history = pd.concat([history, new_entry], ignore_index=True)
-    
-    # Save the history to CSV file in a specific directory (Documents folder)
-    history.to_csv(r"conversion_history.csv", index=False)  # Change this path if needed
+    history.to_csv("conversion_history.csv", index=False)
 
-# Read conversion history from CSV file
+# Read conversion history
 def read_conversion_history():
-    # Check if the CSV file exists, if not, create a new empty DataFrame
-    file_path = r"conversion_history.csv"  # Change this path if needed
-    if os.path.exists(file_path):
-        return pd.read_csv(file_path)
-    else:
-        return pd.DataFrame(columns=["Category", "Value", "From", "To", "Result"])
+    if os.path.exists("conversion_history.csv"):
+        return pd.read_csv("conversion_history.csv")
+    return pd.DataFrame(columns=["Category", "Value", "From", "To", "Result"])
 
 # Main Streamlit app
 def main():
-    st.set_page_config(page_title="Professional Unit Converter", layout="wide")
-    
-    # Display logo image with the correct parameter
+    # Display logo
     try:
         img = Image.open("unit.png")
         st.image(img, use_container_width=True)
@@ -88,23 +102,21 @@ def main():
     with st.sidebar:
         st.title("⚙️ Settings")
 
-        # Recent Conversions
-        st.subheader("📜 Recent Conversions")
+        st.subheader("📜 Recent Conversions ")
         recent_history = read_conversion_history()
         if not recent_history.empty:
-            for index, row in recent_history.tail(5).iterrows():  # Show the last 5 conversions
-                st.write(f"🔹 {row['Value']} {row['From']} ➡ {row['Result']} {row['To']}")  
+            st.dataframe(recent_history.tail(10), use_container_width=True)
         else:
-            st.write("No history available.")
+            st.write("No recent conversions available.")
 
         st.markdown("---")
 
         st.markdown(""" 
-        ### ℹ️ About This App
+         ### ℹ️ About This App
         This **Professional Unit Converter** app provides an easy and intuitive way to convert various units across multiple categories, helping you quickly get accurate results. Whether you're working with **Length**, **Weight**, **Temperature**, **Time**, **Data Storage**, or **Speed**, this app has you covered.
         """)
-         
 
+    # User input
     category = st.selectbox("Select Category", ["Length", "Weight", "Temperature", "Time", "Data Storage", "Speed"])
     value = st.number_input("Enter Value", min_value=0.0, format="%.2f")
 
@@ -117,21 +129,22 @@ def main():
         "Speed": ["m/s", "km/h", "mph"]
     }
 
-    # Display From and To Unit in the same line
+
+    # Display From and To Unit
     col1, col2 = st.columns(2)
     with col1:
         from_unit = st.selectbox("From Unit", unit_options[category], key="from_unit")
     with col2:
         to_unit = st.selectbox("To Unit", unit_options[category], key="to_unit")
 
+    # Styled Convert Button
     if st.button("Convert"):
         result = convert_units(value, from_unit, to_unit, category)
-        
         if result is not None:
             st.success(f"Result: {result}")
             save_conversion(category, value, from_unit, to_unit, result)
         else:
             st.error("Conversion not available for the selected units.")
-    
+
 if __name__ == "__main__":
     main()
