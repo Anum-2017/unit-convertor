@@ -130,14 +130,6 @@ def main():
         - 🌐 **Perfect for Multiple Fields**: Whether you're working on a project, doing research, or simply converting for everyday use, this app is designed to make conversions simpler and faster.
         """)
 
-      # Feedback section
-      st.sidebar.header("💬 Feedback")
-      feedback = st.sidebar.text_area("Share your thoughts or suggestions:")
-      if st.sidebar.button("Submit Feedback"):        
-       if feedback:
-          st.session_state.feedback_count += 1
-          st.sidebar.success("Thank you for your feedback! 😊")
-
     # User input
     category = st.selectbox("Select Category", ["Length", "Weight", "Temperature", "Time", "Data Storage", "Speed"])
     value = st.number_input("Enter Value", min_value=0.0, format="%.2f")
