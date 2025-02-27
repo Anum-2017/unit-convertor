@@ -131,8 +131,8 @@ def main():
         """)
 
     # User input
-    category = st.selectbox("Select Category", ["Length", "Weight", "Temperature", "Time", "Data Storage", "Speed"])
-    value = st.number_input("Enter Value", min_value=0.0, format="%.2f")
+    category = st.selectbox("**📌 Select Category**", ["Length", "Weight", "Temperature", "Time", "Data Storage", "Speed"])
+    value = st.number_input("**🔢 Enter Value**", min_value=0.0, format="%.2f")
 
     unit_options = {
         "Length": ["Meter", "Kilometer", "Mile", "Foot", "Inch"],
@@ -147,9 +147,9 @@ def main():
     # Display From and To Unit
     col1, col2 = st.columns(2)
     with col1:
-        from_unit = st.selectbox("From Unit", unit_options[category], key="from_unit")
+        from_unit = st.selectbox("**🔄 From Unit**", unit_options[category], key="from_unit")
     with col2:
-        to_unit = st.selectbox("To Unit", unit_options[category], key="to_unit")
+        to_unit = st.selectbox("**🎯To Unit**", unit_options[category], key="to_unit")
 
     # Styled Convert Button
     if st.button("Convert"):
