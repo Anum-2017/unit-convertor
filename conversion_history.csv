@@ -15,3 +15,6 @@ Length,100.0,Mile,Kilometer,160.934
 Weight,90.0,Kilogram,Gram,90000.0
 Length,0.0,Meter,Foot,0.0
 Speed,100.0,km/h,m/s,27.77777777777778
+Pressure,100.0,Pascal,Bar,0.001
+Weight,50.0,Kilogram,Gram,50000.0
+Temperature,90.0,Celsius,Fahrenheit,194.0
