@@ -3,8 +3,8 @@ import pandas as pd
 from PIL import Image
 import os
 
-# Set Streamlit page configuration (Must be the first command)
-st.set_page_config(page_title="Professional Unit Converter", layout="wide")
+# Set Streamlit page configuration
+st.set_page_config(page_title="Enhanced Unit Converter", layout="wide")
 
 # Apply custom button styling
 st.markdown(
@@ -66,46 +66,66 @@ def convert_units(value, from_unit, to_unit, category):
         "Speed": {
             ("m/s", "km/h"): 3.6, ("m/s", "mph"): 2.23694, ("km/h", "m/s"): 1/3.6, ("km/h", "mph"): 0.621371,
             ("mph", "m/s"): 0.44704, ("mph", "km/h"): 1.60934
-        }
+        },
+         "Energy": {
+            ("Joule", "Kilojoule"): 0.001, ("Joule", "Calorie"): 0.239006, ("Kilojoule", "Joule"): 1000,
+            ("Kilojoule", "Calorie"): 239.006, ("Calorie", "Joule"): 4.184, ("Calorie", "Kilojoule"): 0.004184
+        },
+        "Pressure": {
+            ("Pascal", "Bar"): 1e-5, ("Pascal", "PSI"): 0.000145038,
+            ("Bar", "Pascal"): 100000, ("Bar", "PSI"): 14.5038,
+            ("PSI", "Pascal"): 6894.76, ("PSI", "Bar"): 0.0689476
+        },
+        "Volume": {
+            ("Liter", "Milliliter"): 1000, ("Liter", "Cubic Meter"): 0.001, ("Milliliter", "Liter"): 0.001,
+            ("Cubic Meter", "Liter"): 1000
+        },
     }
 
     try:
-        factor = conversion_factors[category].get((from_unit, to_unit)) or conversion_factors[category].get((to_unit, from_unit))
-        if factor:
-            return factor(value) if callable(factor) else value * factor
-        return None
+        factor = conversion_factors[category].get((from_unit, to_unit))
+        if callable(factor):
+            return factor(value)
+        return value * factor if factor else None
     except KeyError:
         return None
 
-# Save conversion history
+# Save and Read Conversion History
 def save_conversion(category, value, from_unit, to_unit, result):
     history = read_conversion_history()
     new_entry = pd.DataFrame([[category, value, from_unit, to_unit, result]], columns=["Category", "Value", "From", "To", "Result"])
     history = pd.concat([history, new_entry], ignore_index=True)
     history.to_csv("conversion_history.csv", index=False)
 
-# Read conversion history
 def read_conversion_history():
     if os.path.exists("conversion_history.csv"):
         return pd.read_csv("conversion_history.csv")
     return pd.DataFrame(columns=["Category", "Value", "From", "To", "Result"])
 
-# Main Streamlit app
+# Download conversion history
+def download_history():
+    history = read_conversion_history()
+    if not history.empty:
+        csv = history.to_csv(index=False).encode("utf-8")
+        st.download_button("📥 Download History", csv, "conversion_history.csv", "text/csv")
+
+# Main App
+
 def main():
-    # Display logo
+    # Display Logo
     try:
         img = Image.open("unit.png")
         st.image(img, use_container_width=True)
     except:
-        st.warning("Image not found. Please make sure the image exists in the same directory as the script.")
-
+        st.warning("Image not found. Please check the directory.")
+    
     with st.sidebar:
         st.title("⚙️ Settings")
-
-        st.subheader("📜 Recent Conversions ")
+        st.subheader("📜 Recent Conversions")
         recent_history = read_conversion_history()
         if not recent_history.empty:
             st.dataframe(recent_history.tail(10), use_container_width=True)
+            download_history()
         else:
             st.write("No recent conversions available.")
 
@@ -113,10 +133,19 @@ def main():
 
         st.markdown(""" 
          ### ℹ️ About This App
-        This **Professional Unit Converter** app provides an easy and intuitive way to convert various units across multiple categories, helping you quickly get accurate results. Whether you're working with **Length**, **Weight**, **Temperature**, **Time**, **Data Storage**, or **Speed**, this app has you covered.
+        This **Professional Unit Converter** app provides an easy and intuitive way to convert various units across multiple categories, helping you quickly get accurate results. Whether you're working with **Length**, **Weight**, **Temperature**, **Time**, **Data Storage**, **Speed**, **Energy**, **Pressure**, and **Volume**, this app has you covered.
 
         #### Features:
-        - **Multi-Category Conversion**: Convert between units in categories like Length (e.g., Meter to Kilometer), Weight (e.g., Kilogram to Pound), Temperature (e.g., Celsius to Fahrenheit), Time (e.g., Seconds to Hours), Data Storage (e.g., GB to MB), and Speed (e.g., m/s to km/h).
+         - **Multi-Category Conversion**: Convert between units in categories like:
+           - **Length** (e.g., Meter to Kilometer)  
+           - **Weight** (e.g., Kilogram to Pound)  
+           - **Temperature** (e.g., Celsius to Fahrenheit)  
+           - **Time** (e.g., Seconds to Hours)  
+           - **Data Storage** (e.g., GB to MB)  
+           - **Speed** (e.g., m/s to km/h)  
+           - **Energy** (e.g., Joules to Calories)  
+           - **Pressure** (e.g., Pascal to Bar)  
+           - **Volume** (e.g., Liters to Gallons)
         - **Conversion History**: Automatically stores your recent conversions so you can quickly access past results.
         - **Accurate Results**: Calculations are based on reliable conversion factors and formulas.
         - **User-Friendly Interface**: Simple design with interactive inputs that make conversions a breeze.
@@ -130,28 +159,27 @@ def main():
         - 🌐 **Perfect for Multiple Fields**: Whether you're working on a project, doing research, or simply converting for everyday use, this app is designed to make conversions simpler and faster.
         """)
 
-    # User input
-    category = st.selectbox("**📌 Select Category**", ["Length", "Weight", "Temperature", "Time", "Data Storage", "Speed"])
+    category = st.selectbox("**📌 Select Category**", ["Length", "Weight", "Temperature", "Time", "Data Storage", "Speed", "Energy", "Pressure", "Volume"])
     value = st.number_input("**🔢 Enter Value**", min_value=0.0, format="%.2f")
-
+    
     unit_options = {
         "Length": ["Meter", "Kilometer", "Mile", "Foot", "Inch"],
         "Weight": ["Kilogram", "Gram", "Pound", "Ounce"],
         "Temperature": ["Celsius", "Fahrenheit", "Kelvin"],
-        "Time": ["Seconds", "Minutes", "Hours", "Days", "Weeks"],
-        "Data Storage": ["Bytes", "KB", "MB", "GB", "TB"],
-        "Speed": ["m/s", "km/h", "mph"]
+        "Time": ["Seconds", "Minutes", "Hours"],
+        "Data Storage": ["Bytes", "KB", "MB", "GB"],
+        "Speed": ["m/s", "km/h", "mph"],
+        "Energy": ["Joule", "Calorie", "kWh"],
+        "Pressure": ["Pascal", "Bar", "PSI"],
+        "Volume": ["Liter", "Milliliter", "Gallon"]
     }
-
-
-    # Display From and To Unit
+    
     col1, col2 = st.columns(2)
     with col1:
         from_unit = st.selectbox("**🔄 From Unit**", unit_options[category], key="from_unit")
     with col2:
-        to_unit = st.selectbox("**🎯To Unit**", unit_options[category], key="to_unit")
+        to_unit = st.selectbox("**🎯 To Unit**", unit_options[category], key="to_unit")
 
-    # Styled Convert Button
     if st.button("Convert"):
         result = convert_units(value, from_unit, to_unit, category)
         if result is not None:
