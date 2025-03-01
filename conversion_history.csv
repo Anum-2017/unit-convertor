@@ -1,7 +1,13 @@
 Category,Value,From,To,Result
 Weight,70.0,Kilogram,Gram,70000.0
-Speed,100.0,m/s,km/h,360.0
-Temperature,100.0,Celsius,Fahrenheit,212.0
-Data Storage,50.0,Bytes,KB,0.048828125
-Time,30.0,Seconds,Hours,0.0083333333333333
-Length,20.0,Meter,Kilometer,0.02
+Weight,90.0,Gram,Kilogram,0.09
+Length,100.0,Meter,Kilometer,0.1
+Length,80.0,Mile,Kilometer,128.7472
+Temperature,60.0,Celsius,Fahrenheit,140.0
+Temperature,90.0,Fahrenheit,Celsius,32.22222222222222
+Time,60.0,Seconds,Minutes,1.0
+Time,70.0,Minutes,Hours,1.1666666666666667
+Data Storage,30.0,Bytes,KB,0.029296875
+Data Storage,30.0,KB,Bytes,30720.0
+Speed,100.0,km/h,m/s,27.77777777777778
+Energy,100.0,Joule,Calorie,23.9006

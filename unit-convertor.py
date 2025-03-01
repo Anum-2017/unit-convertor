@@ -94,8 +94,15 @@ def convert_units(value, from_unit, to_unit, category):
 def save_conversion(category, value, from_unit, to_unit, result):
     history = read_conversion_history()
     new_entry = pd.DataFrame([[category, value, from_unit, to_unit, result]], columns=["Category", "Value", "From", "To", "Result"])
-    history = pd.concat([history, new_entry], ignore_index=True)
+
+    # Ensure empty DataFrames don't cause issues in future Pandas versions
+    if history.empty:
+        history = new_entry  # Directly assign new entry if history is empty
+    else:
+        history = pd.concat([history, new_entry], ignore_index=True)
+
     history.to_csv("conversion_history.csv", index=False)
+
 
 def read_conversion_history():
     if os.path.exists("conversion_history.csv"):
