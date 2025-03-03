@@ -104,32 +104,17 @@ def save_conversion(category, value, from_unit, to_unit, result):
     history.to_csv("conversion_history.csv", index=False)
 
 
-# def read_conversion_history():
-#     if os.path.exists("conversion_history.csv"):
-#         return pd.read_csv("conversion_history.csv")
-#     return pd.DataFrame(columns=["Category", "Value", "From", "To", "Result"])
-
 def read_conversion_history():
-    if os.path.exists("conversion_history.csv") and os.path.getsize("conversion_history.csv") > 0:
+    if os.path.exists("conversion_history.csv"):
         return pd.read_csv("conversion_history.csv")
     return pd.DataFrame(columns=["Category", "Value", "From", "To", "Result"])
 
-# Download conversion history and clear it after download
+# Download conversion history
 def download_history():
     history = read_conversion_history()
     if not history.empty:
         csv = history.to_csv(index=False).encode("utf-8")
         st.download_button("📥 Download History", csv, "conversion_history.csv", "text/csv")
-        
-        # Empty the conversion history after download
-        open("conversion_history.csv", "w").close()
-        
-# Download conversion history
-# def download_history():
-#     history = read_conversion_history()
-#     if not history.empty:
-#         csv = history.to_csv(index=False).encode("utf-8")
-#         st.download_button("📥 Download History", csv, "conversion_history.csv", "text/csv")
 
 # Main App
 
